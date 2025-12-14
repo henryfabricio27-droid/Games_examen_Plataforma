@@ -1,0 +1,106 @@
+.game-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin: 30px 0;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.detail-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.detail-image img {
+  max-width: 100%;
+  max-height: 500px;
+  border-radius: 8px;
+}
+
+.detail-info h1 {
+  margin-top: 0;
+  color: #333;
+}
+
+.platform {
+  color: #666;
+  font-size: 16px;
+  margin: 15px 0;
+}
+
+.genres {
+  margin: 20px 0;
+}
+
+.genres strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.genre-badge {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.description {
+  margin: 30px 0;
+}
+
+.description h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.description p {
+  color: #666;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.pricing {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.pricing p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.normal-price {
+  color: #007bff;
+}
+
+.offer-price {
+  color: #dc3545;
+  font-size: 24px;
+}
+
+.featured {
+  color: #ffc107;
+  font-size: 18px;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #fff3cd;
+  border-radius: 5px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .game-detail {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

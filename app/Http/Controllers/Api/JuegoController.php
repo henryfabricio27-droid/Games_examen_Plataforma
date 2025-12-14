@@ -4,28 +4,37 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Juego;
+
+//use App\Services\FirebaseService;
 
 class JuegoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    //GET
-    public function index()
+    //protected $firebaseService;
+
+    public function __construct()
     {
-        $query = Juego::with(['plataforma', 'generos']) ->where('activo', true);
+        //$this->firebaseService = $firebaseService;
+    }
+
+    //GET
+    public function index(Request $request)
+    {
+        $query = Juego::with(['plataforma', 'generos'])->where('activo', true);
 
         if ($request->has('buscar')) {
             $termino = $request->input('buscar');
-            $query->whereHas('titulo', 'LIKE', '%' . $termino .'%');
-                $q->where('slug', $plataformaSlug);
-            };
+            $query->where('titulo', 'LIKE', '%' . $termino . '%');
+        }
 
         $juegos = $query->orderBy('created_at', 'desc')->get(); 
         
         return response()->json([
             'success' => true,
-            'data' => $juegos->count(),
+            'data' => $juegos,
         ], 200);
     }
 
@@ -40,28 +49,34 @@ class JuegoController extends Controller
             'titulo' => 'required|string|max:255',
             'descripcion_corta' => 'nullable|string',
             'descripcion_larga' => 'nullable|string',
-            'precio_normal' => 'required|numeric|',
+            'precio_normal' => 'required|numeric',
             'precio_oferta' => 'nullable|numeric|lt:precio_normal',
-            'imagen_url' => 'nullable|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'destacada' => 'boolean',
             'activo' => 'boolean',
-            'plataforma_id' => 'required|exists:plataformas,id'
+            'plataforma_id' => 'required|exists:plataformas,id',
             'generos' => 'array',
             'generos.*' => 'exists:generos,id'
         ]);
-    
-        $juego = Juego::create($request->all());
+//manejo de la imagen
+        $data = $request->all();
+
+        // if ($request->hasFile('imagen')) {
+        //     $url = $this->firebaseService->uploadImage($request->file('imagen'), 'juegos');
+        //     $data['imagen_url'] = $url;
+        // }
+
+        $juego = Juego::create($data);
 
         if ($request->has('generos')) {
             $juego->generos()->sync($request->input('generos'));
-
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Juego creado correctamente',
-            'data' => $juego -> load('generos')
-            ], 201);
-        }
-      
+            'data' => $juego->load('generos')
+        ], 201);
     }
 
     /**
@@ -98,28 +113,36 @@ class JuegoController extends Controller
         }
 
         $request->validate([
-            'titulo' => 'sometimes|requiered|string|max:255',
+            'titulo' => 'sometimes|required|string|max:255',
             'descripcion_corta' => 'sometimes|nullable|string',
             'descripcion_larga' => 'sometimes|nullable|string',
-            'precio_normal' => 'sometimes|requiered|numeric|',
+            'precio_normal' => 'sometimes|required|numeric',
             'precio_oferta' => 'sometimes|nullable|numeric|lt:precio_normal',
-            'imagen_url' => 'sometimes|nullable|string',
+            'imagen' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'destacada' => 'sometimes|boolean',
             'activo' => 'sometimes|boolean',
-            'plataforma_id' => 'sometimes|requiered|exists:plataformas,id',
+            'plataforma_id' => 'sometimes|required|exists:plataformas,id',
             'generos' => 'sometimes|array',
             'generos.*' => 'exists:generos,id'
         ]);
 
-        $juego->update($request->all());
+        $data = $request->all();
+        // if ($request->hasFile('imagen')) {
+        //     $url = $this->firebaseService->uploadImage($request->file('imagen'), 'juegos');
+        //     $data['imagen_url'] = $url;
+        // }
+        //eliminar imagen anterior en firebase si se actualiza
+        $juego->update($data);
         if ($request->has('generos')) {
             $juego->generos()->sync($request->input('generos'));
         }
+
         return response()->json([
             'success' => true,
             'message' => 'Juego actualizado correctamente',
             'data' => $juego->load('generos')
         ], 200);
+
     }
     /**
      * Remove the specified resource from storage.

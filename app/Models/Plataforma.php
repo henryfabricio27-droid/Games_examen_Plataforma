@@ -16,12 +16,11 @@ class Plataforma extends Model
     protected $fillable = ['nombre','slug',];
 
     //relaciones
-    //relacion de N a M con juegos
+    //relacion de 1 a N con juegos
 
     public function juegos()
     {
-                                  //modelo,foreingn key
-      return $this->belongsToMany(Juego::class,'juego_genero','plataforma_id','juego_id');
+        return $this->hasMany(Juego::class, 'plataforma_id');
     }
 
 }

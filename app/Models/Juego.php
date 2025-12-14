@@ -37,4 +37,10 @@ class Juego extends Model
     {
         return $this->belongsToMany(Genero::class, 'juego_genero', 'juego_id', 'genero_id');
     }
+
+    // Un juego tiene muchos comentarios (1 a N)
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class, 'juego_id');
+    }
 }
