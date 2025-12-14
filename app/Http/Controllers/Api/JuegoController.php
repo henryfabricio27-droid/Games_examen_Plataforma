@@ -58,13 +58,22 @@ class JuegoController extends Controller
             'generos' => 'array',
             'generos.*' => 'exists:generos,id'
         ]);
-//manejo de la imagen
+
         $data = $request->all();
 
-        // if ($request->hasFile('imagen')) {
-        //     $url = $this->firebaseService->uploadImage($request->file('imagen'), 'juegos');
-        //     $data['imagen_url'] = $url;
-        // }
+        // Manejo de imagen
+        if ($request->hasFile('imagen')) {
+            try {
+                $file = $request->file('imagen');
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                // Guardar en storage/app/public/juegos
+                $path = $file->storeAs('juegos', $filename, 'public');
+                $data['imagen_url'] = '/storage/' . $path;
+            } catch (\Exception $e) {
+                \Log::error('Error guardando imagen: ' . $e->getMessage());
+            }
+        }
 
         $juego = Juego::create($data);
 
@@ -127,11 +136,26 @@ class JuegoController extends Controller
         ]);
 
         $data = $request->all();
-        // if ($request->hasFile('imagen')) {
-        //     $url = $this->firebaseService->uploadImage($request->file('imagen'), 'juegos');
-        //     $data['imagen_url'] = $url;
-        // }
-        //eliminar imagen anterior en firebase si se actualiza
+        
+        // Manejo de imagen
+        if ($request->hasFile('imagen')) {
+            try {
+                $file = $request->file('imagen');
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                // Guardar en storage/app/public/juegos
+                $path = $file->storeAs('juegos', $filename, 'public');
+                $data['imagen_url'] = '/storage/' . $path;
+                
+                // Eliminar imagen anterior si existe
+                if ($juego->imagen_url && file_exists(public_path($juego->imagen_url))) {
+                    unlink(public_path($juego->imagen_url));
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error guardando imagen: ' . $e->getMessage());
+            }
+        }
+        
         $juego->update($data);
         if ($request->has('generos')) {
             $juego->generos()->sync($request->input('generos'));

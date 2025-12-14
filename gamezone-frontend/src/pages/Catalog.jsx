@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { juegoService } from '../services';
+import { juegoService, gamerpowerService } from '../services';
+import Giveaways from '../components/Giveaways';
 import './Catalog.css';
 
 function Catalog() {
@@ -17,7 +18,16 @@ function Catalog() {
     try {
       setLoading(true);
       const response = await juegoService.getAll(termino);
-      setJuegos(response.data.data);
+      let juegosData = response.data.data;
+      
+      // Enriquecer juegos con imágenes de GamerPower
+      juegosData = await Promise.all(
+        juegosData.map(async (juego) => {
+          return await gamerpowerService.enrichGame(juego);
+        })
+      );
+      
+      setJuegos(juegosData);
       setError('');
     } catch (err) {
       setError('Error al cargar los juegos');
@@ -56,9 +66,16 @@ function Catalog() {
         <div className="games-grid">
           {juegos.map(juego => (
             <div key={juego.id} className="game-card">
-              {juego.imagen_url && (
-                <img src={juego.imagen_url} alt={juego.titulo} className="game-image" />
-              )}
+              <div className="game-image-container">
+                <img 
+                  src={juego.imagen_url || `https://via.placeholder.com/300x400?text=${encodeURIComponent(juego.titulo)}`}
+                  alt={juego.titulo} 
+                  className="game-image"
+                  onError={(e) => {
+                    e.target.src = `https://via.placeholder.com/300x400?text=${encodeURIComponent(juego.titulo)}`;
+                  }}
+                />
+              </div>
               <div className="game-info">
                 <h3>{juego.titulo}</h3>
                 <p className="game-platform">{juego.plataforma?.nombre}</p>
@@ -86,6 +103,8 @@ function Catalog() {
           ))}
         </div>
       )}
+
+      <Giveaways />
     </div>
   );
 }

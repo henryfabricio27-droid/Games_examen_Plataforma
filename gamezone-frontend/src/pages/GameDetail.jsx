@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { juegoService } from '../services';
+import { juegoService, gamerpowerService } from '../services';
 import Comentarios from '../components/Comentarios';
 import './GameDetail.css';
 
@@ -15,7 +15,12 @@ function GameDetail() {
     const loadJuego = async () => {
       try {
         const response = await juegoService.getById(id);
-        setJuego(response.data.data);
+        let juegoData = response.data.data;
+        
+        // Enriquecer con datos de GamerPower
+        juegoData = await gamerpowerService.enrichGame(juegoData);
+        
+        setJuego(juegoData);
       } catch (err) {
         setError('Error al cargar el juego');
       } finally {
@@ -37,11 +42,15 @@ function GameDetail() {
   return (
     <div className="container">
       <div className="game-detail">
-        {juego.imagen_url && (
-          <div className="detail-image">
-            <img src={juego.imagen_url} alt={juego.titulo} />
-          </div>
-        )}
+        <div className="detail-image">
+          <img 
+            src={juego.imagen_url || `https://via.placeholder.com/400x500?text=${encodeURIComponent(juego.titulo)}`}
+            alt={juego.titulo}
+            onError={(e) => {
+              e.target.src = `https://via.placeholder.com/400x500?text=${encodeURIComponent(juego.titulo)}`;
+            }}
+          />
+        </div>
         <div className="detail-info">
           <h1>{juego.titulo}</h1>
           
@@ -73,6 +82,23 @@ function GameDetail() {
           </div>
 
           {juego.destacada && <p className="featured">⭐ Juego Destacado</p>}
+          
+          {juego.giveaway_url && (
+            <div className="giveaway-section">
+              <p className="giveaway-notice">🎁 ¡Disponible como giveaway!</p>
+              {juego.valor_estimado && (
+                <p className="giveaway-value">Valor estimado: ${juego.valor_estimado}</p>
+              )}
+              <a 
+                href={juego.giveaway_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn btn-success"
+              >
+                Obtener Juego Gratis
+              </a>
+            </div>
+          )}
         </div>
       </div>
 

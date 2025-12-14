@@ -25,18 +25,29 @@ export const juegoService = {
   
   create: (juego) => {
     const formData = new FormData();
-    Object.keys(juego).forEach(key => {
-      if (key === 'generos' && Array.isArray(juego[key])) {
-        juego[key].forEach((generoId, index) => {
-          formData.append(`generos[${index}]`, generoId);
-        });
-      } else if (key !== 'imagen') {
-        formData.append(key, juego[key]);
-      }
-    });
+    
+    // Agregar campos normales
+    formData.append('titulo', juego.titulo);
+    formData.append('descripcion_corta', juego.descripcion_corta || '');
+    formData.append('descripcion_larga', juego.descripcion_larga || '');
+    formData.append('precio_normal', juego.precio_normal);
+    formData.append('precio_oferta', juego.precio_oferta || '');
+    formData.append('plataforma_id', juego.plataforma_id);
+    formData.append('destacada', juego.destacada ? 1 : 0);
+    formData.append('activo', juego.activo ? 1 : 0);
+    
+    // Agregar géneros
+    if (Array.isArray(juego.generos) && juego.generos.length > 0) {
+      juego.generos.forEach((generoId, index) => {
+        formData.append(`generos[${index}]`, generoId);
+      });
+    }
+    
+    // Agregar imagen si existe
     if (juego.imagen) {
       formData.append('imagen', juego.imagen);
     }
+    
     return apiClient.post('/juegos', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
@@ -44,18 +55,29 @@ export const juegoService = {
   
   update: (id, juego) => {
     const formData = new FormData();
-    Object.keys(juego).forEach(key => {
-      if (key === 'generos' && Array.isArray(juego[key])) {
-        juego[key].forEach((gid, index) => {
-          formData.append(`generos[${index}]`, gid);
-        });
-      } else if (key !== 'imagen') {
-        formData.append(key, juego[key]);
-      }
-    });
+    
+    // Agregar campos normales
+    formData.append('titulo', juego.titulo);
+    formData.append('descripcion_corta', juego.descripcion_corta || '');
+    formData.append('descripcion_larga', juego.descripcion_larga || '');
+    formData.append('precio_normal', juego.precio_normal);
+    formData.append('precio_oferta', juego.precio_oferta || '');
+    formData.append('plataforma_id', juego.plataforma_id);
+    formData.append('destacada', juego.destacada ? 1 : 0);
+    formData.append('activo', juego.activo ? 1 : 0);
+    
+    // Agregar géneros
+    if (Array.isArray(juego.generos) && juego.generos.length > 0) {
+      juego.generos.forEach((gid, index) => {
+        formData.append(`generos[${index}]`, gid);
+      });
+    }
+    
+    // Agregar imagen si existe
     if (juego.imagen) {
       formData.append('imagen', juego.imagen);
     }
+    
     return apiClient.put(`/juegos/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
@@ -103,3 +125,7 @@ export const comentarioService = {
   delete: (comentarioId) => 
     apiClient.delete(`/comentarios/${comentarioId}`)
 };
+
+import gamerpowerService from './gamerpower';
+
+export { gamerpowerService };

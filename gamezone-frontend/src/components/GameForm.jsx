@@ -62,16 +62,34 @@ function GameForm({ juego, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validar que campos requeridos no estén vacíos
+    if (!formData.titulo.trim()) {
+      alert('El título es requerido');
+      return;
+    }
+    if (!formData.plataforma_id) {
+      alert('Debes seleccionar una plataforma');
+      return;
+    }
+    if (!formData.precio_normal) {
+      alert('El precio es requerido');
+      return;
+    }
+    
     setLoading(true);
 
     try {
       const submitData = {
         ...formData,
+        generos: formData.generos.length > 0 ? formData.generos : [],
         imagen
       };
       await onSave(submitData);
+      alert('Juego guardado exitosamente');
     } catch (error) {
       console.error('Error al guardar:', error);
+      alert('Error al guardar el juego: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }

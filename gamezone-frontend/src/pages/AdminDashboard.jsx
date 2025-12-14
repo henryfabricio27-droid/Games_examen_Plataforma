@@ -65,8 +65,11 @@ function AdminDashboard() {
       loadJuegos();
       setShowForm(false);
       setEditingGame(null);
+      alert('Juego guardado exitosamente');
     } catch (error) {
       console.error('Error al guardar juego:', error);
+      const message = error.response?.data?.message || 'Error al guardar el juego';
+      alert(`Error: ${message}`);
     }
   };
 

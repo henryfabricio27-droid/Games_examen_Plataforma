@@ -98,6 +98,45 @@
   text-align: center;
 }
 
+.giveaway-section {
+  background-color: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.giveaway-notice {
+  color: #2e7d32;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+}
+
+.giveaway-value {
+  color: #558b2f;
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.btn-success {
+  display: inline-block;
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-success:hover {
+  background-color: #45a049;
+}
+
 @media (max-width: 768px) {
   .game-detail {
     grid-template-columns: 1fr;
